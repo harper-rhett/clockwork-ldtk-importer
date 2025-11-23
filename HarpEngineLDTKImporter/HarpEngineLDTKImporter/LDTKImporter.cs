@@ -1,6 +1,7 @@
 ﻿using HarpEngine.Graphics;
 using HarpEngine.Tiles;
 using HarpEngine.Utilities;
+using HarpEngineLDTKImporter;
 using ldtk;
 using System.Numerics;
 
@@ -10,7 +11,7 @@ public class LDTKImporter
 {
 	private LdtkJson ldtkData;
 	private Dictionary<string, Texture> tilesetsByPath = new();
-	private Dictionary<string, TiledArea> areasByID = new();
+	private Dictionary<string, LDTKArea> areasByID = new();
 	private int tileSize;
 
 	public LDTKImporter(string localPath, int tileSize)
@@ -23,7 +24,7 @@ public class LDTKImporter
 	public TiledWorld GenerateWorld()
 	{
 		DeserializeTilesets();
-		List<TiledArea> areas = DeserializeLevels();
+		LDTKArea[] areas = DeserializeLevels();
 		TiledWorld world = new(areas, tileSize);
 		DeserializeSpawn();
 		return world;
@@ -93,14 +94,35 @@ public class LDTKImporter
 		return tileIDs;
 	}
 
-	private List<TiledArea> DeserializeLevels()
+	//private Dictionary<string, List<LDTKEntity>> DeserializeEntities(LayerInstance layerData)
+	//{
+	//	int entityCount = layerData.EntityInstances.Length;
+	//	LDTKEntity[] ldtkEntities = new LDTKEntity[entityCount];
+	//	for (int entityIndex  = 0; entityIndex < entityCount; entityIndex++)
+	//	{
+	//		EntityInstance entityData = layerData.EntityInstances[entityIndex];
+
+	//		foreach (FieldInstance fieldData in entityData.FieldInstances)
+	//		{
+
+	//		}
+	//	}
+	//	return ldtkEntities;
+	//}
+
+	private LDTKArea[] DeserializeLevels()
 	{
-		List<TiledArea> areas = new();
-		foreach (Level levelData in ldtkData.Levels)
+		int areaCount = ldtkData.Levels.Length;
+		LDTKArea[] areas = new LDTKArea[areaCount];
+		for (int areaIndex = 0; areaIndex < areaCount; areaIndex++)
 		{
+			// Get level
+			Level levelData = ldtkData.Levels[areaIndex];
+
 			// Get tiles layer
 			Dictionary<string, LayerInstance> layersData = DeserializeLayers(levelData);
-			LayerInstance tileLayerData = layersData["Tiles"];
+			LayerInstance tileLayerData = layersData["tiles"];
+			LayerInstance entityLayerData = layersData["entities"];
 
 			// Extract some basic information
 			int widthInTiles = (int)tileLayerData.CWid;
@@ -108,12 +130,12 @@ public class LDTKImporter
 
 			// Create area
 			Vector2 position = new((int)levelData.WorldX, (int)levelData.WorldY);
-			TiledArea area = new(position, widthInTiles, heightInTiles, tileSize);
+			LDTKArea area = new(position, widthInTiles, heightInTiles, tileSize);
 			area.Tiles = DeserializeTiles(tileLayerData);
 			area.TilesByID = DeserializeTileTypes(tileLayerData, widthInTiles, heightInTiles);
 
 			// Register area
-			areas.Add(area);
+			areas[areaIndex] = area;
 			areasByID[levelData.Iid] = area;
 		}
 		return areas;
@@ -124,7 +146,7 @@ public class LDTKImporter
 	private void DeserializeSpawn() // change to deserialize entities? spawn should be temporary
 	{
 		foreach (LdtkTableOfContentEntry entityData in ldtkData.Toc)
-			if (entityData.Identifier == "Spawn")
+			if (entityData.Identifier == "spawn")
 			{
 				LdtkTocInstanceData spawnInstance = entityData.InstancesData[0];
 				string levelID = spawnInstance.Iids.LevelIid;
