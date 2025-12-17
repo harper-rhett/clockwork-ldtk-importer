@@ -13,6 +13,7 @@ public class LDTKImporter
 	private Dictionary<string, Texture> tilesetsByPath = new();
 	private Dictionary<string, LDTKArea> areasByID = new();
 	private int tileSize;
+	public Action<LDTKArea> AreaImported;
 
 	public LDTKImporter(string localPath, int tileSize)
 	{
@@ -146,6 +147,7 @@ public class LDTKImporter
 			LDTKArea area = new(levelData.Identifier, fields, entities, position, widthInTiles, heightInTiles, tileSize);
 			area.Tiles = DeserializeTiles(tileLayerData);
 			area.TilesByID = DeserializeTileTypes(tileLayerData, widthInTiles, heightInTiles);
+			AreaImported.Invoke(area);
 
 			// Register area
 			areas[areaIndex] = area;

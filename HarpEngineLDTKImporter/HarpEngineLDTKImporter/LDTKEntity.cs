@@ -15,7 +15,7 @@ public class LDTKField
 	}
 }
 
-public class LDTKEntity : Entity
+public class LDTKEntity
 {
 	public readonly string ID;
 	private LDTKField[] fields;
