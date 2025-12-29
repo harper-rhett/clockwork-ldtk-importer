@@ -1,6 +1,6 @@
 ﻿using HarpEngine.Tiles;
 
-namespace HarpEngineLDTKImporter;
+namespace HarpEngine.LDTKImporter;
 
 public class LDTKWorld : TiledWorld
 {

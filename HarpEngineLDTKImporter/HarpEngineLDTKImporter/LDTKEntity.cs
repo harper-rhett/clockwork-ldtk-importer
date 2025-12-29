@@ -1,7 +1,7 @@
 ﻿using HarpEngine;
 using System.Numerics;
 
-namespace HarpEngineLDTKImporter;
+namespace HarpEngine.LDTKImporter;
 
 public class LDTKField
 {

@@ -1,7 +1,7 @@
 ﻿using HarpEngine.Tiles;
 using System.Numerics;
 
-namespace HarpEngineLDTKImporter;
+namespace HarpEngine.LDTKImporter;
 
 public class LDTKArea : TiledArea
 {
