@@ -17,10 +17,10 @@ public class LDTKImporter
 		ImportTilesets();
 	}
 
-	public LDTKWorld ImportWorld(string tileLayerName, string entityLayerName)
+	public LDTKGameLayer ImportWorld(string tileLayerName, string entityLayerName)
 	{
 		LDTKGameArea[] areas = ImportGameAreas(tileLayerName, entityLayerName);
-		LDTKWorld world = new(areas, tileSize);
+		LDTKGameLayer world = new(areas, tileSize);
 		return world;
 	}
 
@@ -64,9 +64,9 @@ public class LDTKImporter
 		return gameAreas.ToArray();
 	}
 
-	public TiledDecorationLayer ImportDecorationLayer(LDTKGameArea[] areas, string layerName, int drawLayer)
+	public TiledLayer<TiledArea> ImportDecorationLayer(string layerName, int drawLayer)
 	{
-		TiledDecorationLayer decorationLayer = new();
+		TiledLayer<TiledArea> layer = new(tileSize);
 		foreach (LDTKLevel level in ldtkUtility.Levels)
 		{
 			// Get tiles layer
@@ -75,7 +75,8 @@ public class LDTKImporter
 			// Create area
 			TiledArea area = new(level.Position, tileLayerData.WidthInTiles, tileLayerData.HeightInTiles, tileSize);
 			area.Tiles = ImportTiles(tileLayerData);
+			layer.AddArea(area);
 		}
-		return decorationLayer;
+		return layer;
 	}
 }
