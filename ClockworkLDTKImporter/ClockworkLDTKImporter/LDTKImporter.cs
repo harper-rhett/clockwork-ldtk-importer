@@ -64,9 +64,10 @@ public class LDTKImporter
 		return gameAreas.ToArray();
 	}
 
-	public TiledLayer<TiledArea> ImportDecorationLayer(string layerName, int drawLayer)
+	public TiledLayer ImportDecorationLayer(string layerName, out Dictionary<string, TiledArea> areasByName)
 	{
-		TiledLayer<TiledArea> layer = new(tileSize);
+		TiledLayer layer = new(tileSize);
+		areasByName = new();
 		foreach (LDTKLevel level in ldtkUtility.Levels)
 		{
 			// Get tiles layer
@@ -75,6 +76,7 @@ public class LDTKImporter
 			// Create area
 			TiledArea area = new(level.Position, tileLayerData.WidthInTiles, tileLayerData.HeightInTiles, tileSize);
 			area.Tiles = ImportTiles(tileLayerData);
+			areasByName[level.Name] = area;
 			layer.AddArea(area);
 		}
 		return layer;
