@@ -6,7 +6,7 @@ namespace Clockwork.LDTKImporter;
 public class LDTKImporter
 {
 	private int tileSize;
-	private Dictionary<string, Texture> tilesetsByPath = new();
+	private Dictionary<string, ITexture> tilesetsByPath = new();
 	private LDTKUtility ldtkUtility;
 	public Action<LDTKGameArea> GameAreaImported;
 
@@ -35,7 +35,7 @@ public class LDTKImporter
 
 		foreach (LDTKTile ldtkTile in ldtkLayer.Tiles)
 		{
-			Texture tilesetTexture = tilesetsByPath[ldtkLayer.TilesetPath];
+			ITexture tilesetTexture = tilesetsByPath[ldtkLayer.TilesetPath];
 			Tile tile = new(ldtkTile.LocalPosition, tilesetTexture, ldtkTile.TilesetX, ldtkTile.TilesetY, tileSize, ldtkTile.XFlipped, ldtkTile.YFlipped);
 			tiles.Add(tile);
 		}
